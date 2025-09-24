@@ -1,0 +1,6 @@
+@LOKE_HostAddress = http://localhost:5257
+
+GET {{LOKE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
