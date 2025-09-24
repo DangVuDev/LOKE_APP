@@ -22,7 +22,7 @@ namespace LOKE.Controller
 
         [HttpHead]
         [AllowAnonymous]
-        public IActionResult Ping() => Ok("Posts API is alive");
+        public IActionResult Ping() => Ok("Posts API is alive with ci/cd);
 
         // Tạo bài đăng mới
         [HttpPost("create")]
