@@ -61,7 +61,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddSwaggerService();
 }
 
-void ConfigureMiddleware(WebApplication app)
+void ConfigureMiddleware(WebApplication app) 
 {
     if (app.Environment.IsDevelopment())
     {
