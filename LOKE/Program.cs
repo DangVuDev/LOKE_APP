@@ -18,7 +18,7 @@ ConfigureMiddleware(app);
 app.Run();
 
 
-// ====================== CONFIG METHODS ======================
+// ====================== CONFIG METHODS =======================
 
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
