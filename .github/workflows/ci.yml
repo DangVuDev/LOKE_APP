@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/loke-app:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/loke-app:latest -f LOKE/Dockerfile .
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/loke-app:latest
