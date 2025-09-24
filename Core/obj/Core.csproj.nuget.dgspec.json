@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Backend\\NET\\Core\\Core.csproj": {}
+    "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\Core.csproj": {}
   },
   "projects": {
-    "D:\\Backend\\NET\\Core\\Core.csproj": {
+    "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Backend\\NET\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "D:\\Backend\\NET\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\vuvan\\.nuget\\packages\\",
-        "outputPath": "D:\\Backend\\NET\\Core\\obj\\",
+        "outputPath": "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

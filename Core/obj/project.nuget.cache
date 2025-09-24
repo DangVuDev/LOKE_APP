@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "y2nTuXQkS2Y=",
+  "dgSpecHash": "k3mvMmQ4re8=",
   "success": true,
-  "projectFilePath": "D:\\Backend\\NET\\Core\\Core.csproj",
+  "projectFilePath": "C:\\Users\\vuvan\\OneDrive\\Documents\\GitHub\\LOKE_APP\\Core\\Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\vuvan\\.nuget\\packages\\aspnetcore.identity.mongo\\8.0.0\\aspnetcore.identity.mongo.8.0.0.nupkg.sha512",
     "C:\\Users\\vuvan\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
