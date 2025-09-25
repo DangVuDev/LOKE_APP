@@ -14,7 +14,6 @@
         public string Content { get; set; } = string.Empty;
         public string? ImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
         public int Likes { get; set; }
         public int SecretLikes { get; set; }
         public List<CommentDto> Comments { get; set; } = [];

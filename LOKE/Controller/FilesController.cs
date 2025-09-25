@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LOKE.Controller
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/image")]
     public class FilesController : ControllerBase
     {
         private readonly IFileStorageService _fileStorageService;

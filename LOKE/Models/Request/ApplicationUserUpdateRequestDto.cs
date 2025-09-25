@@ -5,8 +5,6 @@ namespace LOKE.Models.Request
 {
     public class ApplicationUserUpdateRequestDto
     {
-        public string UserName { get; set; } = string.Empty;
-        public string? Email { get; set; } = string.Empty;
         public string? Name { get; set; } = string.Empty;
 
         // Các trường mở rộng (theo UserModel bên frontend)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Core.Extention
         /// <summary>
         /// Lấy thông tin requester từ JWT token trong header hoặc query string (SignalR)
         /// </summary>
-        public static RequesterInfo GetInfoRequester(this HttpRequest request)
+        public static RequesterInfo? GetInfoRequester(this HttpRequest request)
         {
             string? token = null;
 
@@ -66,11 +67,14 @@ namespace Core.Extention
                     IsExpired = isExpired
                 };
 
+                if(string.IsNullOrEmpty(requester.UserName) || string.IsNullOrEmpty(requester.Email) || isExpired)
+                    return null;
+
                 return requester;
             }
             catch
             {
-                return new RequesterInfo(); // token không hợp lệ
+                return null; // token không hợp lệ
             }
         }
     }

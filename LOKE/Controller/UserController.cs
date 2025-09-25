@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LOKE.Controller
 {
     [ApiController]
-    [Route("api/user")]
+    [Route("api/v1/user")]
     [Authorize]
     public class UserController(IUserService<ApplicationUser> userService) : CoreController
     {
@@ -21,28 +21,26 @@ namespace LOKE.Controller
         public async Task<IActionResult> UpdateUser([FromBody] ApplicationUserUpdateRequestDto request)
         {
             var requester = HttpContext.Request.GetInfoRequester();
-
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             if (request == null)
                 return BadRequest("Request body cannot be null.");
 
-            if (string.IsNullOrWhiteSpace(request.UserName))
+            if (string.IsNullOrWhiteSpace(requester.UserName))
                 return BadRequest("UserName is required.");
 
             // Nếu muốn chỉ cho phép update chính bản thân
-            if (request.UserName != requester.UserName)
+            if (requester.UserName != requester.UserName)
                 return Forbid("Cannot update other user's profile.");
 
-            var getUserResponse = await _userService.GetUserByIdAsync(request.UserName);
+            var getUserResponse = await _userService.GetUserByIdAsync(requester.UserName);
             if (!getUserResponse.IsSuccess || getUserResponse.Data == null)
                 return NotFound(getUserResponse.Message ?? "User not found.");
 
             var userToUpdate = getUserResponse.Data;
 
             // Áp thông tin mới
-            if (!string.IsNullOrEmpty(request.Email)) userToUpdate.Email = request.Email;
             if (!string.IsNullOrEmpty(request.Name)) userToUpdate.Name = request.Name;
             if (!string.IsNullOrEmpty(request.Bio)) userToUpdate.Bio = request.Bio;
             if (!string.IsNullOrEmpty(request.Hometown)) userToUpdate.Hometown = request.Hometown;
@@ -56,7 +54,7 @@ namespace LOKE.Controller
 
             var updateResponse = await _userService.UpdateUserAsync(userToUpdate);
             return updateResponse.IsSuccess
-                ? Ok(updateResponse.Data)
+                ? Ok(updateResponse.Data.ToDto())
                 : BadRequest(updateResponse.Message);
         }
 
@@ -65,8 +63,8 @@ namespace LOKE.Controller
         public async Task<IActionResult> DeleteUser(string userId)
         {
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             if (string.IsNullOrWhiteSpace(userId))
                 return BadRequest("UserId cannot be empty.");
@@ -81,15 +79,29 @@ namespace LOKE.Controller
                 : BadRequest(result.Message);
         }
 
-        // Lấy người dùng theo Id
-        [HttpGet("{userId}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserById(string userId)
+        // Lấy người dùng theo token
+        [HttpGet]
+        public async Task<IActionResult> GetUserByToken()
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            var requester = HttpContext.Request.GetInfoRequester();
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
+
+            var result = await _userService.GetUserByIdAsync(requester.UserName!);
+            return result.IsSuccess && result.Data != null
+                ? Ok(result.Data.ToDto())
+                : NotFound(result.Message ?? "User not found.");
+        }
+
+        // Lấy người dùng theo Id
+        [HttpGet("by-id")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserById([FromQuery] string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
                 return BadRequest("UserId cannot be empty.");
 
-            var result = await _userService.GetUserByIdAsync(userId);
+            var result = await _userService.GetUserByIdAsync(id);
             return result.IsSuccess && result.Data != null
                 ? Ok(result.Data.ToDto())
                 : NotFound(result.Message ?? "User not found.");
@@ -114,8 +126,8 @@ namespace LOKE.Controller
         public async Task<IActionResult> GetAllUsers()
         {
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             var result = await _userService.GetAllUsersAsync();
             return result.IsSuccess && result.Data != null
@@ -128,8 +140,8 @@ namespace LOKE.Controller
         public async Task<IActionResult> AssignRole(string userId, [FromBody] AssignRoleRequest request)
         {
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             if (string.IsNullOrWhiteSpace(userId))
                 return BadRequest("UserId cannot be empty.");

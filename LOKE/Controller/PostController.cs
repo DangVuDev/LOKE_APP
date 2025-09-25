@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LOKE.Controller
 {
     [ApiController]
-    [Route("api/posts")]
+    [Route("api/v1/posts")]
     [Authorize]
     public class PostController(
         IBaseService<PostModel> postService,
@@ -36,8 +36,8 @@ namespace LOKE.Controller
 
             // Lấy UserId từ token
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             var postModel = new PostModel
             {
@@ -89,8 +89,8 @@ namespace LOKE.Controller
                 return NotFound(getResponse.Message ?? "Post not found.");
 
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
 
             if (getResponse.Data.UserId != requester.UserName)
                 return Forbid("Cannot delete others' post.");
@@ -110,13 +110,13 @@ namespace LOKE.Controller
             if (string.IsNullOrWhiteSpace(commentRequest.Content))
                 return BadRequest("Comment content is required.");
 
+            var requester = HttpContext.Request.GetInfoRequester();
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
+
             var postResp = await _postService.GetByIdAsync(commentRequest.PostId);
             if (!postResp.IsSuccess || postResp.Data == null)
                 return NotFound(postResp.Message ?? "Post not found.");
-
-            var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
 
             var comment = new CommentModel
             {
@@ -137,13 +137,14 @@ namespace LOKE.Controller
             if (string.IsNullOrWhiteSpace(postId))
                 return BadRequest("PostId is required.");
 
+            var requester = HttpContext.Request.GetInfoRequester();
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
+
             var postResp = await _postService.GetByIdAsync(postId);
             if (!postResp.IsSuccess || postResp.Data == null)
                 return NotFound(postResp.Message ?? "Post not found.");
 
-            var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
 
             postResp.Data.Likes += 1;
             var updateResp = await _postService.UpdateAsync(postId, postResp.Data);
@@ -158,13 +159,14 @@ namespace LOKE.Controller
             if (string.IsNullOrWhiteSpace(postId))
                 return BadRequest("PostId is required.");
 
+            var requester = HttpContext.Request.GetInfoRequester();
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
+
             var postResp = await _postService.GetByIdAsync(postId);
             if (!postResp.IsSuccess || postResp.Data == null)
                 return NotFound(postResp.Message ?? "Post not found.");
 
-            var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
 
             postResp.Data.SecretLikes += 1;
             var updateResp = await _postService.UpdateAsync(postId, postResp.Data);
@@ -179,8 +181,8 @@ namespace LOKE.Controller
             [FromQuery] int limit = 10)
         {
             var requester = HttpContext.Request.GetInfoRequester();
-            if (requester.IsExpired)
-                return Unauthorized("Token expired.");
+            if (requester == null)
+                return Unauthorized("Token imvaliable.");
             // Lấy danh sách bạn bè accepted
             var friendsResp = await _friendService.GetAllAsync();
             if (!friendsResp.IsSuccess || friendsResp.Data == null)
