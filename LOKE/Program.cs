@@ -4,6 +4,7 @@ using LOKE.Models.Dto;
 using LOKE.Models.Dto.ApplicationDto;
 using LOKE.Models.Model;
 using LOKE.Models.Model.ApplicationModel;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddOpenApi();
 
     // Controllers & Auth
-    services.AddControllers();
+    services.AddControllers().AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
     services.AddAuthorization();
     services.AddCoreAuth<ApplicationUser, ApplicationRole>(configuration);
 
@@ -35,7 +39,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         (typeof(ApplicationUser), typeof(ApplicationUserDto)),
         (typeof(ContactInfo), typeof(ContactInfoDto)),
         (typeof(PostModel), typeof(PostDto)),
-        (typeof(CommentModel), typeof(CommentDto))
+        (typeof(CommentModel), typeof(CommentDto)),
+        (typeof(FriendModel), typeof(FriendDto)),
+        (typeof(ConversationModel), typeof(ConversationDto)),
+        (typeof(MessageContent), typeof(MessageContentDto))
     );
 
     // Cors + File Storage
@@ -50,7 +57,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         new MongoDbModelMapping
         {
             DbSettings = dbSetting,
-            Models = new Type[] { typeof(FriendModel), typeof(PostModel) }
+            Models = [typeof(FriendModel), typeof(PostModel),typeof(ConversationModel)]
         }
     );
 
@@ -59,6 +66,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 
     // Swagger
     services.AddSwaggerService();
+
+    services.AddRealtime(opt =>
+    {
+        opt.UseRedis = false; // true nếu bạn scale-out nhiều server
+        opt.HubPath = "/hubs/app";
+        opt.RedisConnectionString = "localhost:6379"; // chỉ cần khi UseRedis = true
+    });
 }
 
 void ConfigureMiddleware(WebApplication app) 
@@ -72,4 +86,5 @@ void ConfigureMiddleware(WebApplication app)
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
+    app.MapRealtimeHub();
 }

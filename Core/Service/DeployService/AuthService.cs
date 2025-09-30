@@ -121,8 +121,8 @@ namespace Core.Service.DeployService
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!)
             };
 
             var token = new JwtSecurityToken(
@@ -135,15 +135,15 @@ namespace Core.Service.DeployService
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
             var refreshToken = Guid.NewGuid().ToString();
-            RefreshTokens[refreshToken] = user.UserName;
+            RefreshTokens[refreshToken] = user.UserName!;
 
             return new AuthResponse
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 Expiration = token.ValidTo,
-                UserName = user.UserName,
-                Email = user.Email
+                UserName = user.UserName!,
+                Email = user.Email!
             };
         }
     }

@@ -15,15 +15,17 @@ namespace Core.Configuration
             {
                 options.AddPolicy("AllowAll", builder =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    builder
+                        .SetIsOriginAllowed(_ => true) // cho phép mọi origin
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials(); // bắt buộc khi dùng SignalR + token
                 });
             });
             return services;
         }
-
     }
-    
+
+
 
 }
