@@ -1,10 +1,11 @@
 ﻿using Core.Controller;
+using Core.Extention;
 using Core.Model.DTO.Request;
 using Core.Model.DTO.Response;
 using Core.Service.Interfaces;
+using LOKE.Models.Model;
 using LOKE.Models.Model.ApplicationModel;
 using Microsoft.AspNetCore.Mvc;
-using Core.Extention;
 
 namespace LOKE.Controller
 {
@@ -26,11 +27,12 @@ namespace LOKE.Controller
             if (!request.Email.IsEmail())
                 return BadRequest("Invalid email format.");
 
-            var result = await _authService.RegisterAsync(request.Email, request.Password);
-            if (!result.IsSuccess)
-                return BadRequest(result.Message);
+            var createUserResult = await _authService.RegisterAsync(request.Email, request.Password);
+            if (!createUserResult.IsSuccess)
+                return BadRequest(createUserResult.Message);
+            
 
-            return Ok(result.Data);
+            return Ok(createUserResult.Data);
         }
 
         /// <summary>

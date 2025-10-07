@@ -1,4 +1,5 @@
-﻿using Core.Service.Interfaces;
+﻿using Core.Controller;
+using Core.Service.Interfaces;
 using LOKE.Models.Request;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace LOKE.Controller
 {
     [ApiController]
     [Route("api/v1/image")]
-    public class FilesController : ControllerBase
+    public class FilesController : CoreController
     {
         private readonly IFileStorageService _fileStorageService;
 
@@ -26,6 +27,40 @@ namespace LOKE.Controller
             return Ok(new { url });
         }
 
+        [HttpPost("upload-base64")]
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> UploadBase64([FromBody] Base64UploadRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Base64))
+                return BadRequest("Base64 string is required");
+
+            try
+            {
+                // Chuyển base64 -> byte[]
+                var fileBytes = Convert.FromBase64String(request.Base64);
+
+                // Tạo IFormFile tạm để dùng lại service UploadAsync
+                var stream = new MemoryStream(fileBytes);
+                var file = new FormFile(stream, 0, fileBytes.Length, "file", request.FileName)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/png"
+                };
+
+                var url = await _fileStorageService.UploadAsync(file, request.Folder);
+
+                return Ok(new { url });
+            }
+            catch (FormatException)
+            {
+                return BadRequest("Invalid Base64 string");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Upload failed: {ex.Message}");
+            }
+        }
+
         [HttpDelete("delete/{publicId}")]
         public async Task<IActionResult> Delete(string publicId)
         {
@@ -41,5 +76,11 @@ namespace LOKE.Controller
             var url = await _fileStorageService.GetDownloadUrlAsync(publicId);
             return Ok(new { url });
         }
+    }
+    public class Base64UploadRequest
+    {
+        public string Base64 { get; set; } = string.Empty; // Chuỗi base64
+        public string FileName { get; set; } = "image.png"; // Tên file muốn lưu
+        public string Folder { get; set; } = "uploads"; // Thư mục lưu
     }
 }

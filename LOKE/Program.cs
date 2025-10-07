@@ -42,7 +42,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         (typeof(CommentModel), typeof(CommentDto)),
         (typeof(FriendModel), typeof(FriendDto)),
         (typeof(ConversationModel), typeof(ConversationDto)),
-        (typeof(MessageContent), typeof(MessageContentDto))
+        (typeof(MessageContent), typeof(MessageContentDto)),
+        (typeof(UserPostModel), typeof(UserPostDto))
     );
 
     // Cors + File Storage
@@ -57,7 +58,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         new MongoDbModelMapping
         {
             DbSettings = dbSetting,
-            Models = [typeof(FriendModel), typeof(PostModel),typeof(ConversationModel)]
+            Models = [typeof(FriendModel), typeof(PostModel),typeof(ConversationModel), typeof(UserPostModel)]
         }
     );
 

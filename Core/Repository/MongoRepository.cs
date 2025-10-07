@@ -5,6 +5,7 @@ using Core.Repository.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Core.Repository
@@ -93,6 +94,44 @@ namespace Core.Repository
             catch (Exception ex)
             {
                 return BaseServiceResponse<bool>.Fail($"Update failed: {ex.Message}");
+            }
+        }
+        public async Task<BaseServiceResponse<List<T>>> GetByFilterAsync(
+        Expression<Func<T, bool>> filter)
+            {
+                try
+                {
+                    // 1️⃣ Thực hiện truy vấn Mongo theo điều kiện filter
+                    var entities = await _collection.Find(filter).ToListAsync();
+
+                    // 2️⃣ Kiểm tra có kết quả không
+                    if (entities == null || entities.Count == 0)
+                        return BaseServiceResponse<List<T>>.Fail("No matching entities found.");
+
+                    // 3️⃣ Trả kết quả thành công
+                    return BaseServiceResponse<List<T>>.Ok(entities, "Query successful.");
+                }
+                catch (Exception ex)
+                {
+                    // 4️⃣ Bắt lỗi trong quá trình truy vấn
+                    return BaseServiceResponse<List<T>>.Fail($"Get by filter failed: {ex.Message}");
+                }
+            }
+
+        public async Task<BaseServiceResponse<T?>> GetOneByFilterAsync(
+            Expression<Func<T, bool>> filter)
+        {
+            try
+            {
+                var entity = await _collection.Find(filter).FirstOrDefaultAsync();
+                if (entity == null)
+                    return BaseServiceResponse<T?>.Fail("Entity not found.");
+
+                return BaseServiceResponse<T?>.Ok(entity, "Query successful.");
+            }
+            catch (Exception ex)
+            {
+                return BaseServiceResponse<T?>.Fail($"Get by filter failed: {ex.Message}");
             }
         }
 
