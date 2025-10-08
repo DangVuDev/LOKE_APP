@@ -178,7 +178,7 @@ namespace LOKE.Controller
             if (requester == null)
                 return Unauthorized("Token invalid.");
 
-            var ownerResp = await _postService.GetByIdAsync(request.OwnerPostId);
+            var ownerResp = await _postService.GetOneByFilterAsync(e => e.UserId == request.OwnerPostId);
             if (!ownerResp.IsSuccess || ownerResp.Data == null)
                 return NotFound("Owner not found.");
 
@@ -201,7 +201,7 @@ namespace LOKE.Controller
             if (requester == null)
                 return Unauthorized("Token invalid.");
 
-            var ownerResp = await _postService.GetByIdAsync(request.OwnerPostId);
+            var ownerResp = await _postService.GetOneByFilterAsync( e => e.UserId == request.OwnerPostId);
             if (!ownerResp.IsSuccess || ownerResp.Data == null)
                 return NotFound("Post owner not found.");
 
@@ -228,7 +228,7 @@ namespace LOKE.Controller
             if (request == null)
                 return BadRequest("Invalid request.");
 
-            var ownerResp = await _postService.GetByIdAsync(request.OwnerPostId);
+            var ownerResp = await _postService.GetOneByFilterAsync(e => e.UserId == request.OwnerPostId);
             if (!ownerResp.IsSuccess || ownerResp.Data == null)
                 return NotFound("Owner not found.");
 
@@ -251,7 +251,7 @@ namespace LOKE.Controller
             if (request == null)
                 return BadRequest("Invalid request.");
 
-            var ownerResp = await _postService.GetByIdAsync(request.OwnerPostId);
+            var ownerResp = await _postService.GetOneByFilterAsync(e => e.UserId == request.OwnerPostId);
             if (!ownerResp.IsSuccess || ownerResp.Data == null)
                 return NotFound("Owner not found.");
 
